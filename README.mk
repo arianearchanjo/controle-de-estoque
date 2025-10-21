@@ -1,45 +1,45 @@
-# ?? Controle de Estoque — Projeto em C# (Console)
+# ğŸ§¾ Controle de Estoque â€” Projeto em C# (Console)
 
-## ?? Sobre o Projeto
-Este projeto foi desenvolvido como parte da disciplina de **Programação (2º Bimestre)** e tem como objetivo criar um **sistema de controle de estoque em C#**, executado no console, com foco em boas práticas de desenvolvimento e persistência de dados em arquivos CSV.
+## ğŸ“– Sobre o Projeto
+Este projeto foi desenvolvido como parte da disciplina de **ProgramaÃ§Ã£o (2Âº Bimestre)** e tem como objetivo criar um **sistema de controle de estoque em C#**, executado no console, com foco em boas prÃ¡ticas de desenvolvimento e persistÃªncia de dados em arquivos CSV.
 
-O sistema permite **cadastrar produtos, registrar entradas e saídas de estoque**, e **gerar relatórios de controle**, garantindo a integridade das informações e a validação das regras de negócio.
-
----
-
-## ?? Objetivos
-- Implementar **CRUD completo** de produtos e movimentações.  
-- Controlar **entradas e saídas de estoque** com validações.  
-- Utilizar **arquivos CSV** para persistência de dados.  
-- Aplicar **boas práticas** como escrita atômica e tratamento de erros.  
-- Gerar **relatórios automáticos** no console (ex: produtos abaixo do mínimo, extrato por produto).
+O sistema permite **cadastrar produtos, registrar entradas e saÃ­das de estoque**, e **gerar relatÃ³rios de controle**, garantindo a integridade das informaÃ§Ãµes e a validaÃ§Ã£o das regras de negÃ³cio.
 
 ---
 
-## ?? Estrutura do Projeto
+## ğŸ¯ Objetivos
+- Implementar **CRUD completo** de produtos e movimentaÃ§Ãµes.  
+- Controlar **entradas e saÃ­das de estoque** com validaÃ§Ãµes.  
+- Utilizar **arquivos CSV** para persistÃªncia de dados.  
+- Aplicar **boas prÃ¡ticas** como escrita atÃ´mica e tratamento de erros.  
+- Gerar **relatÃ³rios automÃ¡ticos** no console (ex: produtos abaixo do mÃ­nimo, extrato por produto).
+
+---
+
+## ğŸ§± Estrutura do Projeto
 
 ```
 EstoqueConsole/
-?
-??? data/
-?   ??? produtos.csv
-?   ??? movimentos.csv
-?
-??? src/
-?   ??? Program.cs
-?   ??? Modelo/
-?   ?   ??? Produto.cs
-?   ?   ??? Movimento.cs
-?   ??? Servico/
-?       ??? InventarioServico.cs
-?       ??? CsvArmazenamento.cs
-?
-??? README.md
+â”‚
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ produtos.csv
+â”‚   â””â”€â”€ movimentos.csv
+â”‚
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ Program.cs
+â”‚   â”œâ”€â”€ Modelo/
+â”‚   â”‚   â”œâ”€â”€ Produto.cs
+â”‚   â”‚   â””â”€â”€ Movimento.cs
+â”‚   â””â”€â”€ Servico/
+â”‚       â”œâ”€â”€ InventarioServico.cs
+â”‚       â””â”€â”€ CsvArmazenamento.cs
+â”‚
+â””â”€â”€ README.md
 ```
 
 ---
 
-## ?? Formato dos Arquivos
+## ğŸ“¦ Formato dos Arquivos
 
 **produtos.csv**
 ```
@@ -54,7 +54,7 @@ id;produtoId;tipo;quantidade;data;observacao
 
 ---
 
-## ?? Menu Principal (CLI)
+## ğŸ’» Menu Principal (CLI)
 
 ```
 1. Listar produtos
@@ -62,74 +62,74 @@ id;produtoId;tipo;quantidade;data;observacao
 3. Editar produto
 4. Excluir produto
 5. Dar ENTRADA em estoque
-6. Dar SAÍDA de estoque
-7. Relatório: Estoque abaixo do mínimo
-8. Relatório: Extrato de movimentos por produto
+6. Dar SAÃDA de estoque
+7. RelatÃ³rio: Estoque abaixo do mÃ­nimo
+8. RelatÃ³rio: Extrato de movimentos por produto
 9. Salvar (CSV)
 0. Sair
 ```
 
 ---
 
-## ?? Principais Componentes
+## âš™ï¸ Principais Componentes
 
-### ?? Produto
+### ğŸ”¹ Produto
 `Id`, `Nome`, `Categoria`, `EstoqueMinimo`, `Saldo`
 
-Validações:
-- Nome obrigatório  
-- Estoque mínimo ? 0  
-- Impedir remoção com saldo negativo  
+ValidaÃ§Ãµes:
+- Nome obrigatÃ³rio  
+- Estoque mÃ­nimo â‰¥ 0  
+- Impedir remoÃ§Ã£o com saldo negativo  
 
 ---
 
-### ?? Movimento
+### ğŸ”¹ Movimento
 `Id`, `ProdutoId`, `Tipo`, `Quantidade`, `Data`, `Observacao`
 
 Regras:
-- `Entrada()` ? aumenta saldo  
-- `Saida()` ? reduz saldo (bloquear se saldo < quantidade)
+- `Entrada()` â†’ aumenta saldo  
+- `Saida()` â†’ reduz saldo (bloquear se saldo < quantidade)
 
 ---
 
-### ?? InventarioServico
-- Armazena listas em memória  
+### ğŸ”¹ InventarioServico
+- Armazena listas em memÃ³ria  
 - Implementa CRUD de produtos  
-- Valida e aplica movimentações  
-- Gera relatórios no console  
+- Valida e aplica movimentaÃ§Ãµes  
+- Gera relatÃ³rios no console  
 
 ---
 
-### ?? CsvArmazenamento
-- Lê e grava arquivos `.csv`  
-- Implementa **escrita atômica**:  
-  grava em `.tmp`, substitui o original apenas após sucesso  
+### ğŸ”¹ CsvArmazenamento
+- LÃª e grava arquivos `.csv`  
+- Implementa **escrita atÃ´mica**:  
+  grava em `.tmp`, substitui o original apenas apÃ³s sucesso  
 
 ---
 
-## ?? Relatórios
+## ğŸ“Š RelatÃ³rios
 
-- **Produtos abaixo do mínimo:** lista produtos com saldo menor que o estoque mínimo.  
-- **Extrato por produto:** mostra todas as movimentações (entradas e saídas) em ordem cronológica.
+- **Produtos abaixo do mÃ­nimo:** lista produtos com saldo menor que o estoque mÃ­nimo.  
+- **Extrato por produto:** mostra todas as movimentaÃ§Ãµes (entradas e saÃ­das) em ordem cronolÃ³gica.
 
 ---
 
-## ??? Cronograma de Desenvolvimento
+## ğŸ—“ï¸ Cronograma de Desenvolvimento
 
 | Semana | Sprint | Tarefas Principais |
 |---------|---------|--------------------|
 | 1 | Fundamentos | Estrutura do projeto, CRUD inicial |
-| 2 | Persistência e Validações | Concluir CRUD, leitura/escrita CSV |
-| 3 | Regras de Estoque | Entradas e saídas com validações |
-| 4 | Boas Práticas | Tratamento de erros e revisão |
-| 5 | Relatórios | Estoque mínimo e extrato por produto |
-| 6 | Backup e Refatoração | Escrita atômica e ajustes finais |
-| 7 | UX e Consolidação | Melhorar usabilidade e testes |
-| 8 | Apresentação Final | Demonstração e entrega do projeto |
+| 2 | PersistÃªncia e ValidaÃ§Ãµes | Concluir CRUD, leitura/escrita CSV |
+| 3 | Regras de Estoque | Entradas e saÃ­das com validaÃ§Ãµes |
+| 4 | Boas PrÃ¡ticas | Tratamento de erros e revisÃ£o |
+| 5 | RelatÃ³rios | Estoque mÃ­nimo e extrato por produto |
+| 6 | Backup e RefatoraÃ§Ã£o | Escrita atÃ´mica e ajustes finais |
+| 7 | UX e ConsolidaÃ§Ã£o | Melhorar usabilidade e testes |
+| 8 | ApresentaÃ§Ã£o Final | DemonstraÃ§Ã£o e entrega do projeto |
 
 ---
 
-## ????? Autores
+## ğŸ‘©â€ğŸ’» Autores
 
 - Ariane da Silva Archanjo
 - Lucas Vinicius Barros Dias
@@ -138,7 +138,7 @@ Regras:
 - Rafael Martins Schreurs Sales
 - Matheus Sizanoski Figueiredo
 
-**Orientação:** Prof. Marlos Alex de Oliveira Marques
-Disciplina: Programação – 2º Bimestre
+**OrientaÃ§Ã£o:** Prof. Marlos Alex de Oliveira Marques
+Disciplina: ProgramaÃ§Ã£o â€“ 2Âº Bimestre
 Turma: 2ESCN
-**Centro Universitário Autônomo do Brasil**
+**Centro UniversitÃ¡rio AutÃ´nomo do Brasil**
