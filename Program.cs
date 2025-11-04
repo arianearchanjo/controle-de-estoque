@@ -13,15 +13,16 @@ namespace controle_de_estoque_ub
             Console.CursorVisible = false;
 
             MostrarCreditos();
-            MostrarMenuPrincipal();
+            new MenuUI().MostrarPrincipal(new InventarioServico());
         }
 
         static void MostrarCreditos()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            EscreverCentralizado("=============================================");
-            EscreverCentralizado("       CONTROLE DE ESTOQUE - 2º BIMESTRE     ");
-            EscreverCentralizado("=============================================\n");
+            Console.Clear();
+            EscreverCentralizado("╔═══════════════════════════════════════════════╗");
+            EscreverCentralizado("║         CONTROLE DE ESTOQUE - 2º BIMESTRE     ║");
+            EscreverCentralizado("╚═══════════════════════════════════════════════╝\n");
             Console.ResetColor();
 
             string[] alunos =
@@ -41,10 +42,10 @@ namespace controle_de_estoque_ub
             foreach (var nome in alunos)
             {
                 EscreverCentralizado(nome);
-                Thread.Sleep(400); // efeito de entrada gradual
+                Thread.Sleep(300);
             }
 
-            Thread.Sleep(500);
+            Thread.Sleep(400);
             Console.ForegroundColor = ConsoleColor.DarkGray;
             EscreverCentralizado("Professor: Marlos Alex de Oliveira Marques\n");
             Console.ResetColor();
@@ -55,17 +56,27 @@ namespace controle_de_estoque_ub
             Console.ReadKey();
         }
 
-        static void MostrarMenuPrincipal()
+        public static void EscreverCentralizado(string texto)
         {
-            var servico = new InventarioServico();
-            int opcao;
+            int largura = Console.WindowWidth;
+            int posicao = (largura - texto.Length) / 2;
+            if (posicao < 0) posicao = 0;
+            Console.SetCursorPosition(posicao, Console.CursorTop);
+            Console.WriteLine(texto);
+        }
+    }
 
+    class MenuUI
+    {
+        public void MostrarPrincipal(InventarioServico servico)
+        {
+            int opcao;
             do
             {
                 Console.Clear();
                 MostrarCabecalho("SISTEMA DE CONTROLE DE ESTOQUE");
 
-                string[] opcoes = new[]
+                string[] opcoes =
                 {
                     "1 - Listar produtos",
                     "2 - Cadastrar produto",
@@ -79,24 +90,27 @@ namespace controle_de_estoque_ub
                     "0 - Sair"
                 };
 
-                Console.ForegroundColor = ConsoleColor.White;
-                foreach (var linha in opcoes)
+                for (int i = 0; i < opcoes.Length; i++)
                 {
-                    EscreverCentralizado(linha);
+                    Console.ForegroundColor = (i % 2 == 0) ? ConsoleColor.White : ConsoleColor.Gray;
+                    Program.EscreverCentralizado(opcoes[i]);
                 }
                 Console.ResetColor();
 
-                EscreverCentralizado("\nEscolha uma opção: ");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Program.EscreverCentralizado("---------------------------------------------");
+                Console.ResetColor();
+
+                Program.EscreverCentralizado("\nEscolha uma opção: ");
                 Console.CursorVisible = true;
                 Console.SetCursorPosition((Console.WindowWidth / 2) - 1, Console.CursorTop);
-                var entrada = Console.ReadLine();
+                string entrada = Console.ReadLine();
                 Console.CursorVisible = false;
                 Console.Clear();
 
                 if (!int.TryParse(entrada, out opcao))
                 {
-                    EscreverCentralizado("Entrada inválida! Digite um número entre 0 e 9.");
-                    Thread.Sleep(800);
+                    MensagemTemporaria("Entrada inválida! Digite um número entre 0 e 9.", ConsoleColor.Red);
                     continue;
                 }
 
@@ -115,50 +129,44 @@ namespace controle_de_estoque_ub
                         case 9: servico.SalvarDados(); break;
                         case 0: EncerrarSistema(); break;
                         default:
-                            EscreverCentralizado("⚠ Opção inválida. Tente novamente.");
+                            MensagemTemporaria("Opção inválida. Tente novamente.", ConsoleColor.Yellow);
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    EscreverCentralizado($"Erro: {ex.Message}");
-                    Console.ResetColor();
+                    MensagemTemporaria($"Erro: {ex.Message}", ConsoleColor.Red);
                 }
 
                 if (opcao != 0)
                 {
                     Console.WriteLine();
-                    EscreverCentralizado("Pressione qualquer tecla para voltar ao menu...");
+                    Program.EscreverCentralizado("Pressione qualquer tecla para voltar ao menu...");
                     Console.ReadKey();
                 }
 
             } while (opcao != 0);
         }
 
-        static void MostrarCabecalho(string titulo)
+        void MostrarCabecalho(string titulo)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            EscreverCentralizado("=============================================");
-            EscreverCentralizado(titulo.ToUpper());
-            EscreverCentralizado("=============================================\n");
+            string borda = new string('═', 35);
+            Program.EscreverCentralizado($"╔{borda}╗");
+            Program.EscreverCentralizado($"║  {titulo.ToUpper().PadRight(33)}║");
+            Program.EscreverCentralizado($"╚{borda}╝");
+            Console.ResetColor();
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Program.EscreverCentralizado($"Data: {DateTime.Now:dd/MM/yyyy} | Hora: {DateTime.Now:HH:mm:ss}\n");
             Console.ResetColor();
         }
 
-        static void EscreverCentralizado(string texto)
-        {
-            int largura = Console.WindowWidth;
-            int posicao = (largura - texto.Length) / 2;
-            if (posicao < 0) posicao = 0;
-            Console.SetCursorPosition(posicao, Console.CursorTop);
-            Console.WriteLine(texto);
-        }
-
-        static void EncerrarSistema()
+        void EncerrarSistema()
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
-            EscreverCentralizado("Encerrando o sistema...");
+            Program.EscreverCentralizado("Encerrando o sistema...");
             Console.ResetColor();
             Thread.Sleep(500);
 
@@ -167,13 +175,21 @@ namespace controle_de_estoque_ub
             {
                 Console.Clear();
                 string barra = new string('=', i).PadRight(larguraBarra);
-                EscreverCentralizado($"Saindo [{barra}] {i * 100 / larguraBarra}%");
-                Thread.Sleep(80);
+                Program.EscreverCentralizado($"Saindo [{barra}] {i * 100 / larguraBarra}%");
+                Thread.Sleep(70);
             }
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Green;
-            EscreverCentralizado("Obrigado por utilizar o Controle de Estoque!");
+            Program.EscreverCentralizado("Obrigado por utilizar o Controle de Estoque!");
+            Console.ResetColor();
+            Thread.Sleep(1000);
+        }
+
+        void MensagemTemporaria(string texto, ConsoleColor cor)
+        {
+            Console.ForegroundColor = cor;
+            Program.EscreverCentralizado(texto);
             Console.ResetColor();
             Thread.Sleep(1000);
         }
