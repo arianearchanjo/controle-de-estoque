@@ -3,7 +3,7 @@
 ## 📖 Sobre o Projeto
 Este projeto foi desenvolvido como parte da disciplina de **Programação (2º Bimestre)** e tem como objetivo criar um **sistema de controle de estoque em C#**, executado no console, com foco em boas práticas de desenvolvimento e persistência de dados em arquivos CSV.
 
-O sistema permite **cadastrar produtos, registrar entradas e saídas de estoque**, e **gerar relatórios de controle**, garantindo a integridade das informações e a validação das regras de negócio.
+O sistema permite **cadastrar produtos, registrar entradas e saídas de estoque** e **gerar relatórios de controle**, garantindo a integridade das informações e a validação das regras de negócio.
 
 ---
 
@@ -11,8 +11,8 @@ O sistema permite **cadastrar produtos, registrar entradas e saídas de estoque*
 - Implementar **CRUD completo** de produtos e movimentações.  
 - Controlar **entradas e saídas de estoque** com validações.  
 - Utilizar **arquivos CSV** para persistência de dados.  
-- Aplicar **boas práticas** como escrita atômica e tratamento de erros.  
-- Gerar **relatórios automáticos** no console (ex: produtos abaixo do mínimo, extrato por produto).
+- Aplicar **boas práticas de desenvolvimento**, como escrita atômica e tratamento de erros.  
+- Gerar **relatórios automáticos** no console (ex.: produtos abaixo do mínimo, extrato por produto).
 
 ---
 
@@ -34,12 +34,16 @@ EstoqueConsole/
 │       ├── InventarioServico.cs
 │       └── CsvArmazenamento.cs
 │
+└── .gitignore
+└── controle-de-estoque-ub.csproj
+└── controle-de-estoque-ub.sln
+└── Program.cs
 └── README.md
 ```
 
 ---
 
-## 📦 Formato dos Arquivos
+## 📦 Formato dos Arquivos CSV
 
 **produtos.csv**
 ```
@@ -50,7 +54,7 @@ id;nome;categoria;estoqueMinimo;saldo
 ```
 id;produtoId;tipo;quantidade;data;observacao
 ```
-> tipo: `ENTRADA` ou `SAIDA`
+> `tipo`: `ENTRADA` ou `SAIDA`
 
 ---
 
@@ -74,21 +78,21 @@ id;produtoId;tipo;quantidade;data;observacao
 ## ⚙️ Principais Componentes
 
 ### 🔹 Produto
-`Id`, `Nome`, `Categoria`, `EstoqueMinimo`, `Saldo`
+Atributos: `Id`, `Nome`, `Categoria`, `EstoqueMinimo`, `Saldo`
 
 Validações:
 - Nome obrigatório  
 - Estoque mínimo ≥ 0  
-- Impedir remoção com saldo negativo  
+- Impede remoção se o saldo for negativo  
 
 ---
 
 ### 🔹 Movimento
-`Id`, `ProdutoId`, `Tipo`, `Quantidade`, `Data`, `Observacao`
+Atributos: `Id`, `ProdutoId`, `Tipo`, `Quantidade`, `Data`, `Observacao`
 
 Regras:
-- `Entrada()` → aumenta saldo  
-- `Saida()` → reduz saldo (bloquear se saldo < quantidade)
+- `Entrada()` → aumenta o saldo do produto  
+- `Saida()` → reduz o saldo (bloqueia se saldo < quantidade)
 
 ---
 
@@ -102,14 +106,13 @@ Regras:
 
 ### 🔹 CsvArmazenamento
 - Lê e grava arquivos `.csv`  
-- Implementa **escrita atômica**:  
-  grava em `.tmp`, substitui o original apenas após sucesso  
+- Implementa **escrita atômica**: grava em `.tmp` e substitui o arquivo original apenas após sucesso  
 
 ---
 
 ## 📊 Relatórios
 
-- **Produtos abaixo do mínimo:** lista produtos com saldo menor que o estoque mínimo.  
+- **Produtos abaixo do mínimo:** lista produtos cujo saldo está menor que o estoque mínimo.  
 - **Extrato por produto:** mostra todas as movimentações (entradas e saídas) em ordem cronológica.
 
 ---
@@ -117,9 +120,9 @@ Regras:
 ## 🗓️ Cronograma de Desenvolvimento
 
 | Semana | Sprint | Tarefas Principais |
-|---------|---------|--------------------|
-| 1 | Fundamentos | Estrutura do projeto, CRUD inicial |
-| 2 | Persistência e Validações | Concluir CRUD, leitura/escrita CSV |
+|--------|--------|------------------|
+| 1 | Fundamentos | Estrutura do projeto e CRUD inicial |
+| 2 | Persistência e Validações | Concluir CRUD e implementar leitura/escrita CSV |
 | 3 | Regras de Estoque | Entradas e saídas com validações |
 | 4 | Boas Práticas | Tratamento de erros e revisão |
 | 5 | Relatórios | Estoque mínimo e extrato por produto |
@@ -131,14 +134,14 @@ Regras:
 
 ## 👩‍💻 Autores
 
-- Ariane da Silva Archanjo
-- Lucas Vinicius Barros Dias
-- Pedro Henrique Kafka Zaratino
-- Caio Melo Canhetti
-- Rafael Martins Schreurs Sales
-- Matheus Sizanoski Figueiredo
+- Ariane da Silva Archanjo  
+- Lucas Vinicius Barros Dias  
+- Pedro Henrique Kafka Zaratino  
+- Caio Melo Canhetti  
+- Rafael Martins Schreurs Sales  
+- Matheus Sizanoski Figueiredo  
 
-**Orientação:** Prof. Marlos Alex de Oliveira Marques
-Disciplina: Programação – 2º Bimestre
-Turma: 2ESCN
+**Orientação:** Prof. Marlos Alex de Oliveira Marques  
+**Disciplina:** Programação – 2º Bimestre  
+**Turma:** 2ESCN  
 **Centro Universitário Autônomo do Brasil**
