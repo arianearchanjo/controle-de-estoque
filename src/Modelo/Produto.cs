@@ -1,6 +1,6 @@
 ﻿namespace controle_de_estoque_ub.src.Modelo
 {
-    public class Produto
+    public record struct Produto
     {
         public int Id { get; set; }
         public string Nome { get; set; }

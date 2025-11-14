@@ -117,12 +117,15 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
-            var produto = produtos.Find(p => p.Id == id);
-            if (produto == null)
+            int index = produtos.FindIndex(p => p.Id == id);
+
+            if (index == -1)
             {
                 MostrarErro("Produto não encontrado!");
                 return;
             }
+
+            var produto = produtos[index];
 
             Console.WriteLine($"\nProduto atual: {produto.Nome} | Categoria: {produto.Categoria}");
             Console.WriteLine($"Estoque Mín: {produto.EstoqueMinimo} | Saldo: {produto.Saldo}\n");
@@ -162,6 +165,8 @@ namespace controle_de_estoque_ub.src.Servico
                     return;
                 }
             }
+
+            produtos[index] = produto;
 
             MostrarSucesso("Produto atualizado com sucesso!");
         }
