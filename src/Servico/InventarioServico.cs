@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using controle_de_estoque_ub.src.Modelo;
 
 namespace controle_de_estoque_ub.src.Servico
 {
+    /// <summary>
+    /// Serviço principal para gerenciamento do inventário de produtos e movimentações
+    /// </summary>
     public class InventarioServico
     {
         private List<Produto> produtos = new List<Produto>();
@@ -16,18 +20,18 @@ namespace controle_de_estoque_ub.src.Servico
             armazenamento = new CsvArmazenamento();
             CarregarDados();
 
-            // Se não houver produtos carregados, adiciona exemplos
-            if (produtos.Count == 0)
+            // Cria produtos padrão apenas se o arquivo CSV não existir
+            if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "produtos.csv")))
             {
                 produtos.Add(new Produto(1, "Mouse", "Periféricos", 5, 10));
                 produtos.Add(new Produto(2, "Teclado", "Periféricos", 3, 5));
                 produtos.Add(new Produto(3, "Monitor", "Monitores", 2, 2));
-                produtos.Add(new Produto(4, "Webcam", "Periféricos", 5, 1)); // Abaixo do mínimo
+                produtos.Add(new Produto(4, "Webcam", "Periféricos", 5, 1));
             }
         }
 
         /// <summary>
-        /// Carrega dados dos arquivos CSV
+        /// Carrega produtos e movimentos dos arquivos CSV
         /// </summary>
         private void CarregarDados()
         {
@@ -38,27 +42,28 @@ namespace controle_de_estoque_ub.src.Servico
                 movimentos = movimentosCarregados;
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Program.EscreverCentralizado($"✓ {produtos.Count} produtos e {movimentos.Count} movimentos carregados.");
+                Program.EscreverCentralizado($"[OK] {produtos.Count} produtos e {movimentos.Count} movimentos carregados.");
                 Console.ResetColor();
                 System.Threading.Thread.Sleep(800);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Program.EscreverCentralizado($"⚠ Aviso ao carregar dados: {ex.Message}");
+                Program.EscreverCentralizado($"[AVISO] Erro ao carregar dados: {ex.Message}");
                 Console.ResetColor();
                 System.Threading.Thread.Sleep(1000);
             }
         }
 
         /// <summary>
-        /// Cadastra novo produto no sistema
+        /// Cadastra um novo produto no sistema
         /// </summary>
         public void CadastrarProduto()
         {
             Console.Clear();
             MostrarCabecalho("CADASTRAR NOVO PRODUTO");
 
+            // Valida ID do produto
             Console.Write("ID do novo produto: ");
             if (!int.TryParse(Console.ReadLine(), out int id) || id <= 0)
             {
@@ -66,12 +71,14 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
+            // Verifica duplicidade de ID
             if (produtos.Exists(p => p.Id == id))
             {
                 MostrarErro("Já existe um produto com esse ID!");
                 return;
             }
 
+            // Valida nome (obrigatório)
             Console.Write("Nome do produto: ");
             string nome = Console.ReadLine()?.Trim() ?? "";
 
@@ -84,6 +91,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.Write("Categoria: ");
             string categoria = Console.ReadLine()?.Trim() ?? "";
 
+            // Valida estoque mínimo (deve ser >= 0)
             Console.Write("Estoque mínimo: ");
             if (!int.TryParse(Console.ReadLine(), out int estoqueMinimo) || estoqueMinimo < 0)
             {
@@ -91,6 +99,7 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
+            // Valida saldo inicial (deve ser >= 0)
             Console.Write("Saldo inicial: ");
             if (!int.TryParse(Console.ReadLine(), out int saldo) || saldo < 0)
             {
@@ -98,12 +107,14 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
+            // Adiciona produto e salva automaticamente
             produtos.Add(new Produto(id, nome, categoria, estoqueMinimo, saldo));
             MostrarSucesso("Produto cadastrado com sucesso!");
+            armazenamento.SalvarDados(produtos, movimentos);
         }
 
         /// <summary>
-        /// Edita um produto existente
+        /// Edita informações de um produto existente
         /// </summary>
         public void EditarProduto()
         {
@@ -127,9 +138,11 @@ namespace controle_de_estoque_ub.src.Servico
 
             var produto = produtos[index];
 
+            // Exibe informações atuais do produto
             Console.WriteLine($"\nProduto atual: {produto.Nome} | Categoria: {produto.Categoria}");
             Console.WriteLine($"Estoque Mín: {produto.EstoqueMinimo} | Saldo: {produto.Saldo}\n");
 
+            // Permite edição de cada campo (Enter mantém valor atual)
             Console.Write($"Novo nome (Enter para manter '{produto.Nome}'): ");
             string novoNome = Console.ReadLine()?.Trim();
             if (!string.IsNullOrWhiteSpace(novoNome))
@@ -166,9 +179,11 @@ namespace controle_de_estoque_ub.src.Servico
                 }
             }
 
+            // CORREÇÃO CRÍTICA: Atualiza o produto na lista (necessário para record struct)
             produtos[index] = produto;
 
             MostrarSucesso("Produto atualizado com sucesso!");
+            armazenamento.SalvarDados(produtos, movimentos);
         }
 
         /// <summary>
@@ -187,7 +202,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
 
             var produto = produtos.Find(p => p.Id == id);
-            if (produto == null)
+            if (produto.Id == 0) // default value indica que não foi encontrado
             {
                 MostrarErro("Produto não encontrado!");
                 return;
@@ -201,14 +216,16 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
+            // Confirmação de exclusão
             Console.WriteLine($"\nProduto: {produto.Nome}");
             Console.Write("Confirma exclusão? (S/N): ");
             string confirmacao = Console.ReadLine()?.Trim().ToUpper();
 
             if (confirmacao == "S")
             {
-                produtos.Remove(produto);
+                produtos.RemoveAll(p => p.Id == id);
                 MostrarSucesso("Produto excluído com sucesso!");
+                armazenamento.SalvarDados(produtos, movimentos);
             }
             else
             {
@@ -217,7 +234,7 @@ namespace controle_de_estoque_ub.src.Servico
         }
 
         /// <summary>
-        /// Lista todos os produtos cadastrados
+        /// Lista todos os produtos cadastrados com status de estoque
         /// </summary>
         public void ListarProdutos()
         {
@@ -232,12 +249,14 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
+            // Cabeçalho da tabela
             Console.WriteLine($"{"ID",-5} {"Nome",-25} {"Categoria",-20} {"Mín",-6} {"Saldo",-8} {"Status",-15}");
             Console.WriteLine(new string('-', 85));
 
+            // Lista produtos ordenados por ID
             foreach (var p in produtos.OrderBy(x => x.Id))
             {
-                string status = p.Saldo < p.EstoqueMinimo ? "⚠ ABAIXO MÍN" : "OK";
+                string status = p.Saldo < p.EstoqueMinimo ? "[ABAIXO MIN]" : "OK";
                 ConsoleColor cor = p.Saldo < p.EstoqueMinimo ? ConsoleColor.Red : ConsoleColor.White;
 
                 Console.ForegroundColor = cor;
@@ -250,7 +269,7 @@ namespace controle_de_estoque_ub.src.Servico
         }
 
         /// <summary>
-        /// Registra entrada de estoque
+        /// Registra entrada de estoque (aumenta saldo)
         /// </summary>
         public void EntradaEstoque()
         {
@@ -264,15 +283,17 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
-            var produto = produtos.Find(p => p.Id == produtoId);
-            if (produto == null)
+            int index = produtos.FindIndex(p => p.Id == produtoId);
+            if (index == -1)
             {
                 MostrarErro("Produto não encontrado!");
                 return;
             }
 
+            var produto = produtos[index];
             Console.WriteLine($"Produto: {produto.Nome} | Saldo atual: {produto.Saldo}");
 
+            // Valida quantidade a adicionar
             Console.Write("Quantidade a adicionar: ");
             if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0)
             {
@@ -283,10 +304,11 @@ namespace controle_de_estoque_ub.src.Servico
             Console.Write("Observação: ");
             string obs = Console.ReadLine()?.Trim() ?? "";
 
-            // Atualiza saldo
+            // Atualiza saldo do produto
             produto.Saldo += qtd;
+            produtos[index] = produto; // CORREÇÃO: Atualiza na lista
 
-            // Registra movimento
+            // Registra movimento de entrada
             var mov = new Movimento(
                 movimentos.Count + 1,
                 produto.Id,
@@ -298,12 +320,13 @@ namespace controle_de_estoque_ub.src.Servico
 
             movimentos.Add(mov);
 
-            Console.WriteLine($"\n✓ Novo saldo: {produto.Saldo}");
+            Console.WriteLine($"\n[OK] Novo saldo: {produto.Saldo}");
             MostrarSucesso("Entrada registrada com sucesso!");
+            armazenamento.SalvarDados(produtos, movimentos);
         }
 
         /// <summary>
-        /// Registra saída de estoque (com validação de saldo)
+        /// Registra saída de estoque (diminui saldo com validação)
         /// </summary>
         public void SaidaEstoque()
         {
@@ -317,15 +340,17 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
-            var produto = produtos.Find(p => p.Id == produtoId);
-            if (produto == null)
+            int index = produtos.FindIndex(p => p.Id == produtoId);
+            if (index == -1)
             {
                 MostrarErro("Produto não encontrado!");
                 return;
             }
 
+            var produto = produtos[index];
             Console.WriteLine($"Produto: {produto.Nome} | Saldo atual: {produto.Saldo}");
 
+            // Valida quantidade a remover
             Console.Write("Quantidade a remover: ");
             if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0)
             {
@@ -333,7 +358,7 @@ namespace controle_de_estoque_ub.src.Servico
                 return;
             }
 
-            // Validação: saldo insuficiente
+            // Validação crítica: saldo insuficiente
             if (produto.Saldo < qtd)
             {
                 MostrarErro($"Saldo insuficiente! Disponível: {produto.Saldo}, Solicitado: {qtd}");
@@ -343,10 +368,11 @@ namespace controle_de_estoque_ub.src.Servico
             Console.Write("Observação: ");
             string obs = Console.ReadLine()?.Trim() ?? "";
 
-            // Atualiza saldo
+            // Atualiza saldo do produto
             produto.Saldo -= qtd;
+            produtos[index] = produto; // CORREÇÃO: Atualiza na lista
 
-            // Registra movimento
+            // Registra movimento de saída
             var mov = new Movimento(
                 movimentos.Count + 1,
                 produto.Id,
@@ -358,21 +384,22 @@ namespace controle_de_estoque_ub.src.Servico
 
             movimentos.Add(mov);
 
-            Console.WriteLine($"\n✓ Novo saldo: {produto.Saldo}");
+            Console.WriteLine($"\n[OK] Novo saldo: {produto.Saldo}");
 
-            // Alerta se ficou abaixo do mínimo
+            // Alerta se estoque ficou abaixo do mínimo
             if (produto.Saldo < produto.EstoqueMinimo)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"⚠ ATENÇÃO: Estoque abaixo do mínimo! (Mínimo: {produto.EstoqueMinimo})");
+                Console.WriteLine($"[ATENÇÃO] Estoque abaixo do mínimo! (Mínimo: {produto.EstoqueMinimo})");
                 Console.ResetColor();
             }
 
             MostrarSucesso("Saída registrada com sucesso!");
+            armazenamento.SalvarDados(produtos, movimentos);
         }
 
         /// <summary>
-        /// Relatório de produtos abaixo do estoque mínimo
+        /// Gera relatório de produtos com estoque abaixo do mínimo
         /// </summary>
         public void RelatorioAbaixoMinimo()
         {
@@ -384,13 +411,13 @@ namespace controle_de_estoque_ub.src.Servico
             if (produtosAbaixo.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Program.EscreverCentralizado("✓ Todos os produtos estão com estoque adequado!");
+                Program.EscreverCentralizado("[OK] Todos os produtos estão com estoque adequado!");
                 Console.ResetColor();
                 return;
             }
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\n⚠ {produtosAbaixo.Count} produto(s) abaixo do estoque mínimo:\n");
+            Console.WriteLine($"\n[ALERTA] {produtosAbaixo.Count} produto(s) abaixo do estoque mínimo:\n");
             Console.ResetColor();
 
             Console.WriteLine($"{"ID",-5} {"Nome",-25} {"Categoria",-20} {"Mín",-6} {"Saldo",-8} {"Déficit",-10}");
@@ -408,7 +435,7 @@ namespace controle_de_estoque_ub.src.Servico
         }
 
         /// <summary>
-        /// Relatório de movimentações por produto
+        /// Gera extrato de todas as movimentações de um produto específico
         /// </summary>
         public void ExtratoPorProduto()
         {
@@ -423,7 +450,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
 
             var produto = produtos.Find(p => p.Id == produtoId);
-            if (produto == null)
+            if (produto.Id == 0)
             {
                 MostrarErro("Produto não encontrado!");
                 return;
@@ -469,7 +496,7 @@ namespace controle_de_estoque_ub.src.Servico
         }
 
         /// <summary>
-        /// Salva todos os dados em CSV (operação completa)
+        /// Salva todos os dados (produtos e movimentos) em arquivos CSV
         /// </summary>
         public void SalvarDados()
         {
@@ -481,7 +508,7 @@ namespace controle_de_estoque_ub.src.Servico
                 armazenamento.SalvarDados(produtos, movimentos);
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Program.EscreverCentralizado("✓ Dados salvos com sucesso!");
+                Program.EscreverCentralizado("[OK] Dados salvos com sucesso!");
                 Program.EscreverCentralizado($"{produtos.Count} produtos e {movimentos.Count} movimentos gravados.");
                 Console.ResetColor();
             }
@@ -491,7 +518,9 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        // Métodos auxiliares para formatação
+        /// <summary>
+        /// Exibe cabeçalho formatado para seções
+        /// </summary>
         private void MostrarCabecalho(string titulo)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -502,17 +531,23 @@ namespace controle_de_estoque_ub.src.Servico
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Exibe mensagem de sucesso formatada
+        /// </summary>
         private void MostrarSucesso(string mensagem)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\n✓ {mensagem}");
+            Console.WriteLine($"\n[OK] {mensagem}");
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Exibe mensagem de erro formatada
+        /// </summary>
         private void MostrarErro(string mensagem)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\n✗ {mensagem}");
+            Console.WriteLine($"\n[ERRO] {mensagem}");
             Console.ResetColor();
         }
     }
