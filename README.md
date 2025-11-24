@@ -380,7 +380,6 @@ Este é um projeto acadêmico fechado. Para dúvidas ou sugestões, entre em con
 Em caso de dúvidas sobre o projeto:
 - Consulte a documentação técnica acima
 - Verifique os comentários no código-fonte
-- Entre em contato com o professor orientador
 
 ---
 
