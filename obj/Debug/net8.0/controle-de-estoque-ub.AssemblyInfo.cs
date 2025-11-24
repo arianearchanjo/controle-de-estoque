@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("controle-de-estoque-ub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aa1b2c24eac114f89df68ffb350f6823926e9b98")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c155594dc0a96201dd959f562f8f93164bbec42")]
 [assembly: System.Reflection.AssemblyProductAttribute("controle-de-estoque-ub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("controle-de-estoque-ub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

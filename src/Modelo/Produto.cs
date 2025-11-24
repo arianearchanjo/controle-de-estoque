@@ -6,7 +6,7 @@
     {
         /// Identificador único do produto
         public int Id { get; set; }
-        =
+        
         /// Nome do produto (campo obrigatório)
         public string Nome { get; set; }
 

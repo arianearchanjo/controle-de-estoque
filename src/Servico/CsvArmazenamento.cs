@@ -11,9 +11,9 @@ namespace controle_de_estoque_ub.src.Servico
 
     public class CsvArmazenamento
     {
-        private const string DiretorioDados = "data";
-        private const string CaminhoProdutos = "data/produtos.csv";
-        private const string CaminhoMovimentos = "data/movimentos.csv";
+        private string DiretorioDados = Path.Combine(Environment.CurrentDirectory, "data");
+        private string CaminhoProdutos = Path.Combine(Environment.CurrentDirectory, "data/produtos.csv");
+        private string CaminhoMovimentos = Path.Combine( Environment.CurrentDirectory, "data/movimentos.csv");
 
         public CsvArmazenamento()
         {
