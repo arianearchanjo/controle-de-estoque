@@ -6,10 +6,9 @@ using controle_de_estoque_ub.src.Modelo;
 
 namespace controle_de_estoque_ub.src.Servico
 {
-    /// <summary>
     /// Classe responsável pela persistência de dados em arquivos CSV
     /// Implementa escrita atômica para garantir integridade dos dados
-    /// </summary>
+
     public class CsvArmazenamento
     {
         private const string DiretorioDados = "data";
@@ -28,9 +27,8 @@ namespace controle_de_estoque_ub.src.Servico
             CriarArquivosSeNecessario();
         }
 
-        /// <summary>
         /// Cria arquivos CSV com cabeçalhos se não existirem
-        /// </summary>
+    
         private void CriarArquivosSeNecessario()
         {
             if (!File.Exists(CaminhoProdutos))
@@ -44,10 +42,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Carrega produtos e movimentos dos arquivos CSV
-        /// </summary>
-        /// <returns>Tupla contendo listas de produtos e movimentos</returns>
         public (List<Produto>, List<Movimento>) CarregarDados()
         {
             var produtos = CarregarProdutos();
@@ -55,9 +50,8 @@ namespace controle_de_estoque_ub.src.Servico
             return (produtos, movimentos);
         }
 
-        /// <summary>
         /// Carrega produtos do arquivo CSV
-        /// </summary>
+      
         private List<Produto> CarregarProdutos()
         {
             var produtos = new List<Produto>();
@@ -102,9 +96,8 @@ namespace controle_de_estoque_ub.src.Servico
             return produtos;
         }
 
-        /// <summary>
         /// Carrega movimentos do arquivo CSV
-        /// </summary>
+       
         private List<Movimento> CarregarMovimentos()
         {
             var movimentos = new List<Movimento>();
@@ -150,21 +143,16 @@ namespace controle_de_estoque_ub.src.Servico
             return movimentos;
         }
 
-        /// <summary>
         /// Salva produtos e movimentos usando escrita atômica
-        /// </summary>
-        /// <param name="produtos">Lista de produtos a salvar</param>
-        /// <param name="movimentos">Lista de movimentos a salvar</param>
         public void SalvarDados(List<Produto> produtos, List<Movimento> movimentos)
         {
             SalvarProdutosAtomica(produtos);
             SalvarMovimentosAtomica(movimentos);
         }
 
-        /// <summary>
         /// Salva produtos usando escrita atômica (.tmp + replace)
         /// Garante que os dados não sejam corrompidos em caso de falha
-        /// </summary>
+      
         private void SalvarProdutosAtomica(List<Produto> produtos)
         {
             string caminhoTemp = CaminhoProdutos + ".tmp";
@@ -217,10 +205,9 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Salva movimentos usando escrita atômica (.tmp + replace)
         /// Garante que os dados não sejam corrompidos em caso de falha
-        /// </summary>
+     
         private void SalvarMovimentosAtomica(List<Movimento> movimentos)
         {
             string caminhoTemp = CaminhoMovimentos + ".tmp";
@@ -274,11 +261,8 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Escapa caracteres especiais para CSV (ponto e vírgula, aspas, quebras de linha)
-        /// </summary>
-        /// <param name="campo">Texto a ser escapado</param>
-        /// <returns>Texto escapado e pronto para gravação em CSV</returns>
+     
         private string EscapeCsv(string campo)
         {
             if (string.IsNullOrEmpty(campo))
@@ -294,11 +278,7 @@ namespace controle_de_estoque_ub.src.Servico
             return campo;
         }
 
-        /// <summary>
         /// Faz parse de uma linha CSV considerando campos entre aspas
-        /// </summary>
-        /// <param name="linha">Linha CSV a ser parseada</param>
-        /// <returns>Array com os campos separados</returns>
         private string[] ParseCsvLine(string linha)
         {
             var campos = new List<string>();

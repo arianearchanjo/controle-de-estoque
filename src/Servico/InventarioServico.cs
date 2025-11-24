@@ -6,9 +6,7 @@ using controle_de_estoque_ub.src.Modelo;
 
 namespace controle_de_estoque_ub.src.Servico
 {
-    /// <summary>
     /// Serviço principal para gerenciamento do inventário de produtos e movimentações
-    /// </summary>
     public class InventarioServico
     {
         private List<Produto> produtos = new List<Produto>();
@@ -30,9 +28,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Carrega produtos e movimentos dos arquivos CSV
-        /// </summary>
         private void CarregarDados()
         {
             try
@@ -55,9 +51,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Cadastra um novo produto no sistema
-        /// </summary>
         public void CadastrarProduto()
         {
             Console.Clear();
@@ -113,9 +107,7 @@ namespace controle_de_estoque_ub.src.Servico
             armazenamento.SalvarDados(produtos, movimentos);
         }
 
-        /// <summary>
         /// Edita informações de um produto existente
-        /// </summary>
         public void EditarProduto()
         {
             Console.Clear();
@@ -179,16 +171,13 @@ namespace controle_de_estoque_ub.src.Servico
                 }
             }
 
-            // CORREÇÃO CRÍTICA: Atualiza o produto na lista (necessário para record struct)
             produtos[index] = produto;
 
             MostrarSucesso("Produto atualizado com sucesso!");
             armazenamento.SalvarDados(produtos, movimentos);
         }
 
-        /// <summary>
         /// Exclui um produto (apenas se saldo = 0)
-        /// </summary>
         public void ExcluirProduto()
         {
             Console.Clear();
@@ -233,9 +222,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Lista todos os produtos cadastrados com status de estoque
-        /// </summary>
         public void ListarProdutos()
         {
             Console.Clear();
@@ -268,9 +255,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.WriteLine($"Total de produtos: {produtos.Count}");
         }
 
-        /// <summary>
         /// Registra entrada de estoque (aumenta saldo)
-        /// </summary>
         public void EntradaEstoque()
         {
             Console.Clear();
@@ -325,9 +310,7 @@ namespace controle_de_estoque_ub.src.Servico
             armazenamento.SalvarDados(produtos, movimentos);
         }
 
-        /// <summary>
         /// Registra saída de estoque (diminui saldo com validação)
-        /// </summary>
         public void SaidaEstoque()
         {
             Console.Clear();
@@ -398,9 +381,7 @@ namespace controle_de_estoque_ub.src.Servico
             armazenamento.SalvarDados(produtos, movimentos);
         }
 
-        /// <summary>
         /// Gera relatório de produtos com estoque abaixo do mínimo
-        /// </summary>
         public void RelatorioAbaixoMinimo()
         {
             Console.Clear();
@@ -434,9 +415,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.WriteLine(new string('-', 80));
         }
 
-        /// <summary>
         /// Gera extrato de todas as movimentações de um produto específico
-        /// </summary>
         public void ExtratoPorProduto()
         {
             Console.Clear();
@@ -495,9 +474,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.WriteLine($"Total Entradas: {totalEntradas} | Total Saídas: {totalSaidas} | Saldo: {totalEntradas - totalSaidas}");
         }
 
-        /// <summary>
         /// Salva todos os dados (produtos e movimentos) em arquivos CSV
-        /// </summary>
         public void SalvarDados()
         {
             Console.Clear();
@@ -518,9 +495,7 @@ namespace controle_de_estoque_ub.src.Servico
             }
         }
 
-        /// <summary>
         /// Exibe cabeçalho formatado para seções
-        /// </summary>
         private void MostrarCabecalho(string titulo)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -531,9 +506,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.ResetColor();
         }
 
-        /// <summary>
         /// Exibe mensagem de sucesso formatada
-        /// </summary>
         private void MostrarSucesso(string mensagem)
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -541,9 +514,7 @@ namespace controle_de_estoque_ub.src.Servico
             Console.ResetColor();
         }
 
-        /// <summary>
         /// Exibe mensagem de erro formatada
-        /// </summary>
         private void MostrarErro(string mensagem)
         {
             Console.ForegroundColor = ConsoleColor.Red;

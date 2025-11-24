@@ -16,9 +16,8 @@ namespace controle_de_estoque_ub
             new MenuUI().MostrarPrincipal(new InventarioServico());
         }
 
-        /// <summary>
         /// Exibe tela de créditos com informações do projeto e desenvolvedores
-        /// </summary>
+       
         static void MostrarCreditos()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -59,10 +58,8 @@ namespace controle_de_estoque_ub
             Console.ReadKey();
         }
 
-        /// <summary>
+      
         /// Escreve texto centralizado na tela do console
-        /// </summary>
-        /// <param name="texto">Texto a ser exibido</param>
         public static void EscreverCentralizado(string texto)
         {
             int largura = Console.WindowWidth;
@@ -73,15 +70,11 @@ namespace controle_de_estoque_ub
         }
     }
 
-    /// <summary>
     /// Classe responsável pela interface do usuário no console
-    /// </summary>
+  
     class MenuUI
     {
-        /// <summary>
         /// Exibe o menu principal e gerencia navegação do sistema
-        /// </summary>
-        /// <param name="servico">Instância do serviço de inventário</param>
         public void MostrarPrincipal(InventarioServico servico)
         {
             int opcao;
@@ -166,10 +159,7 @@ namespace controle_de_estoque_ub
             } while (opcao != 0);
         }
 
-        /// <summary>
         /// Exibe cabeçalho formatado com título e informações de data/hora
-        /// </summary>
-        /// <param name="titulo">Título do cabeçalho</param>
         void MostrarCabecalho(string titulo)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -184,9 +174,8 @@ namespace controle_de_estoque_ub
             Console.ResetColor();
         }
 
-        /// <summary>
         /// Animação de encerramento do sistema
-        /// </summary>
+  
         void EncerrarSistema()
         {
             Console.Clear();
@@ -212,11 +201,7 @@ namespace controle_de_estoque_ub
             Thread.Sleep(1000);
         }
 
-        /// <summary>
         /// Exibe mensagem temporária colorida
-        /// </summary>
-        /// <param name="texto">Texto da mensagem</param>
-        /// <param name="cor">Cor do texto</param>
         void MensagemTemporaria(string texto, ConsoleColor cor)
         {
             Console.ForegroundColor = cor;

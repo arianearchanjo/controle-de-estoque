@@ -1,0 +1,5 @@
+﻿id;nome;categoria;estoqueMinimo;saldo
+1;Mouse;Periféricos;5;10
+2;Teclado;Periféricos;3;5
+3;Monitor;Monitores;2;2
+4;Webcam;Periféricos;5;1
